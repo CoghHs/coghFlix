@@ -14,7 +14,7 @@ const ContentWrapper = styled.div`
 `;
 
 const SidebarWrapper = styled.div`
-  width: 250px;
+  width: 380px;
 `;
 
 const HeaderWrapper = styled.div`

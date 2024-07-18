@@ -42,7 +42,7 @@ a {
 	text-decoration: none;
 	color: ${(prop) => prop.theme.white.veryWhite};
 }
-ol, ul {
+ol, ul, li {
 	list-style: none;
 }
 blockquote, q {

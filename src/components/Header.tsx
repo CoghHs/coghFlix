@@ -1,13 +1,22 @@
 import styled from "styled-components";
 import { ArrowLeftIcon, MagnifyingGlassIcon } from "./Svg";
+import {
+  motion,
+  useAnimation,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 
-const HeaderWrapper = styled.nav`
+const HeaderWrapper = styled(motion.nav)`
+  position: fixed;
+  width: 98.3%;
   height: 60px;
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 20px;
+  box-sizing: border-box;
   background-color: ${(prop) => prop.theme.black.semiDark};
 `;
 
@@ -40,9 +49,28 @@ const SearchBox = styled.div`
   color: ${(props) => props.theme.white.veryWhite};
 `;
 
+const navVariants = {
+  top: {
+    backgroundColor: "rgba(82, 82, 82, 0.398)",
+  },
+  scroll: {
+    backgroundColor: "rgba(0,0,0,0.8)",
+  },
+};
+
 export default function Header() {
+  const { scrollY } = useScroll();
+  const navAnimation = useAnimation();
+  useMotionValueEvent(scrollY, "change", (y) => {
+    if (scrollY.get() > 80) navAnimation.start("scroll");
+    else navAnimation.start("top");
+  });
   return (
-    <HeaderWrapper>
+    <HeaderWrapper
+      variants={navVariants}
+      animate={navAnimation}
+      initial={"top"}
+    >
       <HeaderItems>
         <IconWrap>
           <ArrowLeftIcon />

@@ -5,6 +5,7 @@ import { FireIcon, FolderPlusIcon, HomeIcon, PlayIcon } from "./Svg";
 import { motion } from "framer-motion";
 
 const SidebarWrap = styled.div`
+  position: fixed;
   padding: 20px;
   width: 250px;
   height: 100vh;
