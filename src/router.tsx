@@ -4,6 +4,7 @@ import Home from "./screens/Home";
 import Popular from "./screens/Popular";
 import ComingSoon from "./screens/ComingSoon";
 import NowPlaying from "./screens/NowPlaying";
+import MovieDetail from "./components/MovieDetail";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +16,12 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/popular",
+        path: "movies/:id",
+        element: <Home />,
+      },
+
+      {
+        path: "popular",
         element: <Popular />,
       },
       {

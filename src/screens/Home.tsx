@@ -1,39 +1,57 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPopular, IAPIResponse, makeBgPath, makeImagePath } from "../api";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Banner = styled.div`
-  position: relative;
-  height: 500px;
+const Banner = styled.div<{ bgPhoto: string }>`
+  height: 50vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  overflow: hidden;
+  padding: 60px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3)),
+    url(${(props) => props.bgPhoto});
+  background-size: cover;
 `;
 
-const BannerImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const Title = styled.h1`
-  position: absolute;
-  top: 50%;
-  left: 20%;
-  transform: translate(-50%, -50%);
+const Title = styled.h2`
   font-size: 60px;
+  margin-bottom: 20px;
   font-weight: bold;
   color: ${(prop) => prop.theme.white.veryWhite};
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-  z-index: 10;
+  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
+`;
+
+const MovieList = styled(motion.ul)`
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+`;
+
+const MovieItem = styled.li`
+  cursor: pointer;
+`;
+
+const MovieImg = styled(motion.img)`
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+const MovieTitle = styled.h1`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: ${(prop) => prop.theme.white.semiWhite};
 `;
 
 export default function Home() {
@@ -41,14 +59,23 @@ export default function Home() {
     queryKey: ["movies"],
     queryFn: getPopular,
   });
-  const bgPhoto = makeBgPath(data?.results[0].backdrop_path || "");
-
+  const navigate = useNavigate();
+  const onClicked = (movieId: number) => {
+    navigate(`movies/${movieId}`);
+  };
   return (
     <Wrapper>
-      <Banner>
-        <BannerImage src={bgPhoto} alt={data?.results[0].title} />
+      <Banner bgPhoto={makeBgPath(data?.results[0].backdrop_path || "")}>
         <Title>{data?.results[0].title}</Title>
       </Banner>
+      <MovieList>
+        {data?.results.map((movie) => (
+          <MovieItem onClick={() => onClicked(movie.id)} key={movie.id}>
+            <MovieImg src={makeImagePath(movie.poster_path)}></MovieImg>
+            <MovieTitle>{movie.title}</MovieTitle>
+          </MovieItem>
+        ))}
+      </MovieList>
     </Wrapper>
   );
 }
