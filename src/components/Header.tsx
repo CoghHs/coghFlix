@@ -6,6 +6,7 @@ import {
   useMotionValueEvent,
   useScroll,
 } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 
 const HeaderWrapper = styled(motion.nav)`
   position: fixed;
@@ -25,7 +26,8 @@ const HeaderItems = styled.div`
   align-items: center;
 `;
 
-const IconWrap = styled.div`
+const IconWrap = styled(motion.div)`
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,6 +43,7 @@ const Logo = styled.div`
   font-size: 22px;
   font-weight: bold;
   color: ${(props) => props.theme.white.veryWhite};
+  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
 `;
 
 const SearchBox = styled.div`
@@ -61,6 +64,7 @@ const navVariants = {
 export default function Header() {
   const { scrollY } = useScroll();
   const navAnimation = useAnimation();
+  const navigate = useNavigate();
   useMotionValueEvent(scrollY, "change", (y) => {
     if (scrollY.get() > 80) navAnimation.start("scroll");
     else navAnimation.start("top");
@@ -72,7 +76,7 @@ export default function Header() {
       initial={"top"}
     >
       <HeaderItems>
-        <IconWrap>
+        <IconWrap whileHover={{ scale: 1.2 }} onClick={() => navigate(-1)}>
           <ArrowLeftIcon />
         </IconWrap>
         <Logo>COGHFLIX</Logo>

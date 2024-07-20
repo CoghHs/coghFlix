@@ -89,6 +89,7 @@ export default function Popular() {
           <MovieList variants={movieListVariants} initial="start" animate="end">
             {data?.results.map((movie) => (
               <MovieItem
+                whileHover={{ scale: 0.9 }}
                 variants={movieItemVariants}
                 layoutId={movie.id + ""}
                 key={movie.id}

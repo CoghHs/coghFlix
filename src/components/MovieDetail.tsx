@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { IMovieDetail, makeBgPath } from "../api";
 import { AnimatePresence, motion } from "framer-motion";
+import Loader from "./Loader";
+import { useState, useEffect } from "react";
+import { BookmarkIcon, BookmarkSlashIcon } from "../components/Svg";
 
 interface MovieDetailProps {
   data: IMovieDetail | undefined;
@@ -94,11 +97,17 @@ const DetailDescription = styled.p`
   padding: 5px 0px;
 `;
 
-const HiXCircleBtn = styled.div`
+const LikeButton = styled.button<{ liked: boolean }>`
+  z-index: 1;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  bottom: 38%;
+  left: 27.5%;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  color: white;
   cursor: pointer;
+  font-size: 24px;
 `;
 
 export default function MovieDetail({
@@ -107,11 +116,37 @@ export default function MovieDetail({
   clicked,
   isLoading,
 }: MovieDetailProps) {
+  const [likedMovies, setLikedMovies] = useState<IMovieDetail[]>([]);
+
+  useEffect(() => {
+    const storedMovies = JSON.parse(
+      localStorage.getItem("likedMovies") || "[]"
+    );
+    setLikedMovies(storedMovies);
+  }, []);
+
+  const isLiked = (movie: IMovieDetail) => {
+    return likedMovies.some((likedMovie) => likedMovie.id === movie.id);
+  };
+
+  const handleLikeClick = (movie: IMovieDetail) => {
+    let updatedLikedMovies = [];
+    if (isLiked(movie)) {
+      updatedLikedMovies = likedMovies.filter(
+        (likedMovie) => likedMovie.id !== movie.id
+      );
+    } else {
+      updatedLikedMovies = [...likedMovies, movie];
+    }
+    setLikedMovies(updatedLikedMovies);
+    localStorage.setItem("likedMovies", JSON.stringify(updatedLikedMovies));
+  };
+
   return (
     <>
       {clicked &&
         (isLoading ? (
-          <div>Loading . . .</div>
+          <Loader />
         ) : (
           <Wrapper>
             <Overlay
@@ -127,11 +162,16 @@ export default function MovieDetail({
                   )})`,
                 }}
               />
-              <HiXCircleBtn onClick={() => setClicked(false)} />
+              <LikeButton
+                liked={isLiked(data!)}
+                onClick={() => handleLikeClick(data!)}
+              >
+                {isLiked(data!) ? <BookmarkSlashIcon /> : <BookmarkIcon />}
+              </LikeButton>
               <DetailWrapItem>
                 <DetailPost
                   style={{
-                    backgroundImage: ` url(${makeBgPath(data?.poster_path!)})`,
+                    backgroundImage: `url(${makeBgPath(data?.poster_path!)})`,
                   }}
                 />
                 <DetailTitle>{data?.title}</DetailTitle>
@@ -142,7 +182,7 @@ export default function MovieDetail({
                   Runtime: {data?.runtime} minutes
                 </DetailDescription>
                 <DetailDescription>
-                  Rating: {data?.vote_average.toFixed(0)}
+                  Rating: {data?.vote_average?.toFixed(0)}
                 </DetailDescription>
                 <DetailDescription>
                   Homepage: {data?.homepage}

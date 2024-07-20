@@ -1,8 +1,17 @@
-// Header.tsx
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
-import { FireIcon, FolderPlusIcon, HomeIcon, PlayIcon } from "./Svg";
+import {
+  BookmarkIcon,
+  FireIcon,
+  FolderPlusIcon,
+  HeartIcon,
+  HomeIcon,
+  PlayIcon,
+  StarIcon,
+} from "./Svg";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { IMovie, makeImagePath } from "../api";
 
 const SidebarWrap = styled.div`
   position: fixed;
@@ -101,11 +110,72 @@ const SidebarItem = ({ active, to, icon, text }: SidebarItemProps) => (
   </Li>
 );
 
+const FavMovies = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const FavMovieItem = styled.div`
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 100px;
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 1px 10px rgba(102, 102, 102, 0.5);
+  }
+`;
+
+const FavMovieImg = styled.img`
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 20px;
+`;
+
+const FavMovieInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const FavMovieTitle = styled.h1`
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: ${(prop) => prop.theme.white.semiWhite};
+`;
+
+const FavMovieDate = styled.span`
+  margin-left: 10px;
+  font-size: 14px;
+  color: ${(prop) => prop.theme.white.semiWhite};
+`;
+
 export default function Sidebar() {
-  const homeMatch = useMatch("");
-  const popularMatch = useMatch("popular");
-  const comingSoonMatch = useMatch("coming-soon");
-  const nowPlayingMatch = useMatch("now-playing");
+  const homeMatch = useMatch("/");
+  const popularMatch = useMatch("/popular");
+  const comingSoonMatch = useMatch("/coming-soon");
+  const nowPlayingMatch = useMatch("/now-playing");
+  const favoriteMatch = useMatch("/favorite");
+  const [likedMovies, setLikedMovies] = useState<IMovie[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedMovies = JSON.parse(
+      localStorage.getItem("likedMovies") || "[]"
+    );
+    setLikedMovies(storedMovies);
+  }, []);
+
+  const onMovieClick = (movieId: number) => {
+    navigate(`/favorite`);
+  };
+
   return (
     <SidebarWrap>
       <Nav>
@@ -134,8 +204,30 @@ export default function Sidebar() {
             icon={<PlayIcon />}
             text="NOW PLAYING"
           />
+          <SidebarItem
+            active={favoriteMatch !== null}
+            to="/favorite"
+            icon={<HeartIcon />}
+            text="FAVORITE"
+          />
         </Ul>
       </Nav>
+      <FavMovies>
+        {likedMovies.map((movie) => (
+          <FavMovieItem key={movie.id} onClick={() => onMovieClick(movie.id)}>
+            <FavMovieImg
+              src={makeImagePath(movie.poster_path)}
+              alt={movie.title}
+            />
+            <FavMovieInfo>
+              <FavMovieTitle>{movie.title}</FavMovieTitle>
+              <FavMovieDate>
+                <StarIcon /> {movie.vote_average.toFixed(0)}
+              </FavMovieDate>
+            </FavMovieInfo>
+          </FavMovieItem>
+        ))}
+      </FavMovies>
     </SidebarWrap>
   );
 }

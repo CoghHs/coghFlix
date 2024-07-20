@@ -24,6 +24,7 @@ const MovieList = styled(motion.ul)`
 
 const MovieItem = styled(motion.li)`
   cursor: pointer;
+
   position: relative;
 `;
 
@@ -89,6 +90,7 @@ export default function CoimingSoon() {
           <MovieList variants={movieListVariants} initial="start" animate="end">
             {data?.results.map((movie) => (
               <MovieItem
+                whileHover={{ scale: 0.9 }}
                 variants={movieItemVariants}
                 layoutId={movie.id + ""}
                 key={movie.id}

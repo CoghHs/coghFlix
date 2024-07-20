@@ -1,9 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPopular, IAPIResponse, makeBgPath, makeImagePath } from "../api";
+import {
+  getPopular,
+  IAPIResponse,
+  IMovie,
+  makeBgPath,
+  makeImagePath,
+} from "../api";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMatch, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import { useEffect, useState } from "react";
+import { BookmarkIcon, BookmarkSlashIcon } from "../components/Svg";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,6 +49,19 @@ const MovieItem = styled(motion.li)<{ size: string }>`
   grid-column: ${(props) => (props.size === "large" ? "span 3" : "span 2")};
   height: ${(props) => (props.size === "large" ? "400px" : "400px")};
   position: relative;
+`;
+
+const LikeButton = styled.button<{ liked: boolean }>`
+  z-index: 1;
+  position: absolute;
+  left: 30%;
+  bottom: 32%;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
 `;
 
 const MovieImg = styled(motion.img)`
@@ -143,6 +164,32 @@ export default function Home() {
     movieMatch?.params.movieId &&
     data?.results.find((movie) => movie.id + "" === movieMatch.params.movieId);
 
+  const [likedMovies, setLikedMovies] = useState<IMovie[]>([]);
+
+  useEffect(() => {
+    const storedMovies = JSON.parse(
+      localStorage.getItem("likedMovies") || "[]"
+    );
+    setLikedMovies(storedMovies);
+  }, []);
+
+  const isLiked = (movie: IMovie) => {
+    return likedMovies.some((likedMovie) => likedMovie.id === movie.id);
+  };
+
+  const handleLikeClick = (movie: IMovie) => {
+    let updatedLikedMovies = [];
+    if (isLiked(movie)) {
+      updatedLikedMovies = likedMovies.filter(
+        (likedMovie) => likedMovie.id !== movie.id
+      );
+    } else {
+      updatedLikedMovies = [...likedMovies, movie];
+    }
+    setLikedMovies(updatedLikedMovies);
+    localStorage.setItem("likedMovies", JSON.stringify(updatedLikedMovies));
+  };
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -155,12 +202,13 @@ export default function Home() {
           <MovieList>
             {data?.results.map((movie, index) => (
               <MovieItem
+                whileHover={{ scale: 0.9 }}
                 size={index % 4 === 0 || index % 4 === 3 ? "large" : "small"}
                 layoutId={movie.id + ""}
                 onClick={() => onClicked(movie.id)}
                 key={movie.id}
               >
-                <MovieImg src={makeBgPath(movie.poster_path)}></MovieImg>
+                <MovieImg src={makeBgPath(movie.poster_path)} />
                 <MovieTitle>{movie.title}</MovieTitle>
               </MovieItem>
             ))}
@@ -179,20 +227,30 @@ export default function Home() {
                           src={makeBgPath(clickedMovie.backdrop_path)}
                           alt="movie"
                         />
-
                         <BigInfo>
                           <BigInfoCover
                             src={makeImagePath(clickedMovie.poster_path)}
                           />
                           <BigTitle>{clickedMovie.title}</BigTitle>
                         </BigInfo>
+                        <LikeButton
+                          liked={isLiked(clickedMovie)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLikeClick(clickedMovie);
+                          }}
+                        >
+                          {isLiked(clickedMovie) ? (
+                            <BookmarkSlashIcon />
+                          ) : (
+                            <BookmarkIcon />
+                          )}
+                        </LikeButton>
                         <As>
                           <BigOverVew>{clickedMovie.overview}</BigOverVew>
                         </As>
                       </>
-                    ) : (
-                      ""
-                    )}
+                    ) : null}
                   </BigMovie>
                 </>
               ) : null}
