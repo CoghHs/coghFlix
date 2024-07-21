@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+전체화면으로 감상해주세요 😃
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
