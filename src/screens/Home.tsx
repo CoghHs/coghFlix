@@ -22,7 +22,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 const Wrapper = styled.div`
-  width: 83%;
+  width: 79%;
 `;
 
 const Banner = styled.div<{ bgPhoto: string }>`
