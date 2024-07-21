@@ -22,7 +22,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 const Wrapper = styled.div`
-  width: 79%;
+  width: 83%;
 `;
 
 const Banner = styled.div<{ bgPhoto: string }>`
@@ -63,8 +63,8 @@ const MovieItem = styled(motion.li)<{ size: string }>`
 const LikeButton = styled.button<{ liked: boolean }>`
   z-index: 1;
   position: absolute;
-  left: 30%;
-  bottom: 32%;
+  left: 0;
+  top: 0;
   padding: 10px;
   border: none;
   background-color: transparent;
