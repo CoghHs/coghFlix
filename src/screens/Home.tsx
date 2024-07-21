@@ -12,12 +12,21 @@ import { useMatch, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useEffect, useState } from "react";
 import { BookmarkIcon, BookmarkSlashIcon } from "../components/Svg";
+import { Navigation, Scrollbar, Autoplay, EffectFade } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "./SwiperBtn.css";
+import "swiper/css";
+import "swiper/css/bundle";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 79%;
 `;
 
 const Banner = styled.div<{ bgPhoto: string }>`
+  z-index: 0;
   height: 50vh;
   display: flex;
   flex-direction: column;
@@ -86,6 +95,7 @@ const MovieTitle = styled.h1`
 
 const Overlay = styled(motion.div)`
   position: fixed;
+  z-index: 1;
   top: 0;
   width: 100%;
   height: 100%;
@@ -94,6 +104,7 @@ const Overlay = styled(motion.div)`
 `;
 
 const BigMovie = styled(motion.div)`
+  z-index: 1;
   position: fixed;
   width: 40vw;
   height: 80vh;
@@ -190,15 +201,37 @@ export default function Home() {
     localStorage.setItem("likedMovies", JSON.stringify(updatedLikedMovies));
   };
 
+  const SWIPER_DELAY = 1.5 * 1000;
+
   return (
     <Wrapper>
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <Banner bgPhoto={makeBgPath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-          </Banner>
+          <Swiper
+            modules={[Navigation, Scrollbar, Autoplay, EffectFade]}
+            autoplay={{ delay: SWIPER_DELAY, disableOnInteraction: false }}
+            slidesPerView={1}
+            effect="fade"
+            navigation
+            scrollbar={{ draggable: true }}
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              maxHeight: "500px",
+              backgroundColor: "rgba(0, 0, 0)",
+            }}
+          >
+            {data?.results.slice(0, 5).map((i: IMovie, index) => (
+              <SwiperSlide key={index}>
+                <Banner bgPhoto={makeBgPath(i.backdrop_path || "")}>
+                  <Title>{i.title}</Title>
+                </Banner>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
           <MovieList>
             {data?.results.map((movie, index) => (
               <MovieItem

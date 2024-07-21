@@ -1,7 +1,6 @@
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import {
-  BookmarkIcon,
   FireIcon,
   FolderPlusIcon,
   HeartIcon,
@@ -15,6 +14,7 @@ import { IMovie, makeImagePath } from "../api";
 
 const SidebarWrap = styled.div`
   position: fixed;
+  z-index: 10;
   padding: 20px;
   width: 250px;
   height: 100vh;
@@ -123,8 +123,10 @@ const FavMovieItem = styled.div`
   cursor: pointer;
   height: 100px;
   border-radius: 10px;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s, all 0.3s;
+  opacity: 0.7;
   &:hover {
+    opacity: 1;
     transform: scale(1.05);
     box-shadow: 0 1px 10px rgba(102, 102, 102, 0.5);
   }

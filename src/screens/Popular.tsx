@@ -34,17 +34,17 @@ const MovieImg = styled(motion.img)`
   border-radius: 10px;
 `;
 
-const MovieTitle = styled.h1`
+const RankBadge = styled.div`
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${(prop) => prop.theme.white.veryWhite};
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  padding: 5px;
+  bottom: -20px;
+  left: -18px;
+  font-size: 80px;
+  font-style: italic;
+  width: 120%;
+  color: white;
   border-radius: 5px;
+  font-weight: 900;
+  text-shadow: 2px 2px 10px rgba(208, 208, 208, 0.814);
 `;
 
 const movieListVariants = {
@@ -87,7 +87,7 @@ export default function Popular() {
       ) : (
         <>
           <MovieList variants={movieListVariants} initial="start" animate="end">
-            {data?.results.map((movie) => (
+            {data?.results.map((movie, index) => (
               <MovieItem
                 whileHover={{ scale: 0.9 }}
                 variants={movieItemVariants}
@@ -99,6 +99,7 @@ export default function Popular() {
                 }}
               >
                 <MovieImg src={makeImagePath(movie.poster_path)} />
+                <RankBadge>{index + 1}</RankBadge>
               </MovieItem>
             ))}
           </MovieList>

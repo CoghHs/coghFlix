@@ -6,7 +6,8 @@ const SpinnerContainer = styled(motion.div)`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: ${(props) => props.theme.black.veryDark};
+  position: fixed;
+  left: 50%;
 `;
 
 const Spinner = styled(motion.div)`

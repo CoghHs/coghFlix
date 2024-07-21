@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { IMovieDetail, makeBgPath } from "../api";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Loader from "./Loader";
 import { useState, useEffect } from "react";
 import { BookmarkIcon, BookmarkSlashIcon } from "../components/Svg";
@@ -34,7 +34,7 @@ const Overlay = styled(motion.div)`
 `;
 
 const DetailWrap = styled(motion.div)`
-  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 0px 30px rgba(255, 255, 255, 0.2);
   position: absolute;
   width: 800px;
   height: 800px;
